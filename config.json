@@ -1,0 +1,15 @@
+{
+  "login": "sergey.gubar187@gmail.com",
+  "password": "Megubar1234$",
+  "factoryId": "08d6c355-a086-5801-3025-036d8e5387ba",
+  "deviations": [
+    {
+      "name": "Width deviation",
+      "id": "08d6c358-ee44-0fd6-acb3-f1cb6d9a45f9"
+    },
+    {
+      "name": "Height deviation",
+      "id": "08d6c358-ff10-3274-bbf8-49771ef8bb6e"
+    }
+  ]
+}
