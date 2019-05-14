@@ -64,7 +64,8 @@ def upload_detail(photo):
         "factoryId": config["factoryId"]
     }
     print("Uploading detail..")
-    r = requests.post(url, headers=headers, json=data)
+    r = requests.post(url, headers=headers, data=data)
+    os.remove(photo)
     print(r.json())
 
 
@@ -89,15 +90,14 @@ def upload_photo(file_name):
     r = requests.post(url, files=photo, headers=headers, data=data)
     print("Upload success!")
     print("Removing file...")
-    os.remove(file_name)
     return r.json()["id"]
 
 
 def upload_quality_params(deviations):
     result = []
     for deviationId, value in deviations.items():
-        id = add_quality_param(deviationId, f"deviation from IoT {datetime.datetime.now()}", value)
-        result.append(id)
+        qp_id = add_quality_param(deviationId, f"param from IoT {datetime.datetime.now()}", value)
+        result.append(qp_id)
     return result
 
 
@@ -114,9 +114,9 @@ def add_quality_param(deviation_id, name, value):
         "standardValue": value
     }
     r = requests.post(url, json=data, headers=headers)
-    id = r.json()["id"]
-    print(f"Add quality param: {id}")
-    return id
+    param_id = r.json()["id"]
+    print(f"Add quality param: {param_id}")
+    return param_id
 
 
 try:
