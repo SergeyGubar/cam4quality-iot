@@ -32,43 +32,51 @@ def sign_in(email, password):
     print(f"got token {token}")
 
 
-def upload_detail(file_name):
+def upload_all_details(file_name):
     global token
     if token is None:
         print("Haven't got any valid token! You should login first")
         return
 
+    photos = files.get_all_photos()
+    if len(photos) == 0:
+        print("Oops! Photos are empty, nothing to upload")
+        return
+    for photo in photos:
+        upload_detail(photo)
+
+
+def upload_detail(photo):
     # TODO: Get values from open cv
     values = [1.4, 1.6]
-
     deviations_config = config["deviations"]
     ids = list(map(lambda x: x["id"], deviations_config))
-
     deviations = dict(zip(ids, values))
-
     upload_quality_params(deviations)
 
-    #
-    # headers = {'Authorization': 'Bearer ' + token}
-    # url = base_url + "/user/uploadPhoto"
-    # print("Uploading " + file_name)
-    # try:
-    #     file = open(file_name, "rb")
-    # except FileNotFoundError:
-    #     print("File was not found!")
-    #     return
-    #
-    # photo = {
-    #     "file": file
-    # }
-    # # TODO
-    # data = {
-    #     ""
-    # }
-    # requests.post(url, files=photo, headers=headers)
-    # print("Upload success!")
-    # print("Removing file...")
-    # os.remove(file_name)
+
+def upload_photo(file_name):
+    global token
+    headers = {'Authorization': 'Bearer ' + token}
+
+    url = base_url + "/uploadPhoto"
+    print("Uploading photo" + file_name)
+    try:
+        file = open(file_name, "rb")
+    except FileNotFoundError:
+        print("File was not found!")
+        return
+
+    photo = {
+        "file": file
+    }
+    data = {
+        "description": f"photo from IoT {datetime.datetime.now()}"
+    }
+    requests.post(url, files=photo, headers=headers, data=data)
+    print("Upload success!")
+    print("Removing file...")
+    os.remove(file_name)
 
 
 def upload_quality_params(deviations):
@@ -91,15 +99,6 @@ def add_quality_param(deviation_id, name, value):
     requests.post(url, json=data, headers=headers)
 
 
-def upload_all_photos():
-    photos = files.get_all_photos()
-    if len(photos) == 0:
-        print("Oops! Photos are empty, nothing to download")
-        return
-    for photo in photos:
-        upload_detail(photo)
-
-
 try:
     config = json.loads((open("config.json").read()))
 except IOError:
@@ -108,10 +107,9 @@ except IOError:
 
 print(config)
 sign_in(config["login"], config["password"])
-upload_detail("tigidik")
+
+upload_photo("1.png")
 
 while True:
-    print("Uploading params...")
-
     # upload_all_photos()
     time.sleep(delay)
