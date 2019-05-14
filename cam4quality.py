@@ -32,27 +32,40 @@ def sign_in(email, password):
     print(f"got token {token}")
 
 
-def upload_all_details(file_name):
+def upload_all_details():
     global token
     if token is None:
         print("Haven't got any valid token! You should login first")
         return
 
-    photos = files.get_all_photos()
-    if len(photos) == 0:
+    photos_names = files.get_all_photos_names()
+    if len(photos_names) == 0:
         print("Oops! Photos are empty, nothing to upload")
         return
-    for photo in photos:
+    for photo in photos_names:
         upload_detail(photo)
 
 
 def upload_detail(photo):
+    url = base_url + "/addDetail"
+    global token
+    headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
+
     # TODO: Get values from open cv
     values = [1.4, 1.6]
     deviations_config = config["deviations"]
     ids = list(map(lambda x: x["id"], deviations_config))
     deviations = dict(zip(ids, values))
-    upload_quality_params(deviations)
+    params_ids = upload_quality_params(deviations)
+    photo_id = upload_photo(photo)
+    data = {
+        "detailQualityParamsIds": params_ids,
+        "photoId": photo_id,
+        "factoryId": config["factoryId"]
+    }
+    print("Uploading detail..")
+    r = requests.post(url, headers=headers, json=data)
+    print(r.json())
 
 
 def upload_photo(file_name):
@@ -73,15 +86,19 @@ def upload_photo(file_name):
     data = {
         "description": f"photo from IoT {datetime.datetime.now()}"
     }
-    requests.post(url, files=photo, headers=headers, data=data)
+    r = requests.post(url, files=photo, headers=headers, data=data)
     print("Upload success!")
     print("Removing file...")
     os.remove(file_name)
+    return r.json()["id"]
 
 
 def upload_quality_params(deviations):
+    result = []
     for deviationId, value in deviations.items():
-        add_quality_param(deviationId, f"deviation from IoT {datetime.datetime.now()}", value)
+        id = add_quality_param(deviationId, f"deviation from IoT {datetime.datetime.now()}", value)
+        result.append(id)
+    return result
 
 
 def add_quality_param(deviation_id, name, value):
@@ -96,7 +113,10 @@ def add_quality_param(deviation_id, name, value):
         "name": name,
         "standardValue": value
     }
-    requests.post(url, json=data, headers=headers)
+    r = requests.post(url, json=data, headers=headers)
+    id = r.json()["id"]
+    print(f"Add quality param: {id}")
+    return id
 
 
 try:
@@ -108,8 +128,7 @@ except IOError:
 print(config)
 sign_in(config["login"], config["password"])
 
-upload_photo("1.png")
-
+# upload_detail("asa")
 while True:
-    # upload_all_photos()
+    upload_all_details()
     time.sleep(delay)
