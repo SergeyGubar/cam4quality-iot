@@ -103,8 +103,8 @@ for c in cnts:
         pixelsPerMetric = dB / args["width"]
 
     # compute the size of the object
-    dimA = dA / pixelsPerMetric
-    dimB = dB / pixelsPerMetric
+    dimB = dA / pixelsPerMetric
+    dimA = dB / pixelsPerMetric
 
     # draw the object sizes on the image
     cv2.putText(orig, "{:.1f}in".format(dimA),
