@@ -1,15 +1,5 @@
-# import cv2
-# im_gray = cv2.imread("detail.jpg", cv2.IMREAD_GRAYSCALE)
-#
-# cv2.imshow("test", im_gray)
-#
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 
 
 def to_inches(sm):
@@ -31,11 +21,3 @@ print("Original width (px) = " + str(width_px))
 print("Original height  (px) = " + str(height_px))
 print("Reference witdh (px) = " + str(reference_width_px))
 print("Pixel metric (px) = " + str(pixel_per_metric))
-# edges = cv2.Canny(img, 200, 500)
-#
-# plt.subplot(121), plt.imshow(img, cmap='gray')
-# plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-# plt.subplot(122), plt.imshow(edges, cmap='gray')
-# plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
-#
-# plt.show()

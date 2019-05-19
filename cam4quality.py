@@ -6,6 +6,7 @@ import json
 import os
 import files
 import datetime
+import parameters_analyzer
 
 base_url = "http://159.89.145.225:8080/api"
 token = None
@@ -125,10 +126,11 @@ except IOError:
     print("Failed reading config. Please create config.json to login")
     sys.exit()
 
-print(config)
-sign_in(config["login"], config["password"])
-
-# upload_detail("asa")
-while True:
-    upload_all_details()
-    time.sleep(delay)
+# print(config)
+# sign_in(config["login"], config["password"])
+#
+# # upload_detail("asa")
+# while True:
+#     upload_all_details()
+#     time.sleep(delay)
+print(str(parameters_analyzer.get_params("detail.jpg")))
