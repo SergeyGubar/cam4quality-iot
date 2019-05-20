@@ -30,7 +30,7 @@ def sign_in(email, password):
 
     global token
     token = r.json().get('access_token')
-    print(f"got token {token}")
+    print("got token" + token)
 
 
 def upload_all_details():
@@ -81,11 +81,15 @@ def upload_photo(file_name):
         print("File was not found!")
         return
 
+    day = datetime.datetime.day
+    month = datetime.datetime.month
+    year = datetime.datetime.year
+
     photo = {
         "file": file
     }
     data = {
-        "description": f"photo from IoT {datetime.datetime.now()}"
+        "description": "IoT " + str(day) + "/" + str(month) + "/" + str(year)
     }
     r = requests.post(url, files=photo, headers=headers, data=data)
     print("Upload success!")
@@ -96,8 +100,11 @@ def upload_photo(file_name):
 
 def upload_quality_params(deviations):
     result = []
+    day = datetime.datetime.day
+    month = datetime.datetime.month
+    year = datetime.datetime.year
     for deviationId, value in deviations.items():
-        qp_id = add_quality_param(deviationId, f"param from IoT {datetime.datetime.now()}", value)
+        qp_id = add_quality_param(deviationId, "IoT " + str(day) + "/" + str(month) + "/" + str(year), value)
         result.append(qp_id)
     return result
 
@@ -116,7 +123,7 @@ def add_quality_param(deviation_id, name, value):
     }
     r = requests.post(url, json=data, headers=headers)
     param_id = r.json()["id"]
-    print(f"Add quality param: {param_id}")
+    print("Add quality param: " + str(param_id))
     return param_id
 
 
