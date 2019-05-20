@@ -52,22 +52,21 @@ def upload_detail(photo):
     global token
     headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
 
-    # TODO: Get values from open cv
-    values = [1.4, 1.6]
+    values = parameters_analyzer.get_params(photo)
     deviations_config = config["deviations"]
     ids = list(map(lambda x: x["id"], deviations_config))
     deviations = dict(zip(ids, values))
     params_ids = upload_quality_params(deviations)
     photo_id = upload_photo(photo)
     data = {
-        "detailQualityParamsIds": params_ids,
-        "photoId": photo_id,
-        "factoryId": config["factoryId"]
+        'detailQualityParamsIds': params_ids,
+        'photoId': photo_id,
+        'factoryId': config["factoryId"]
     }
     print("Uploading detail..")
-    r = requests.post(url, headers=headers, data=data)
+    r = requests.post(url, headers=headers, json=data)
     os.remove(photo)
-    print(r.json())
+    print(r.status_code)
 
 
 def upload_photo(file_name):
@@ -75,7 +74,7 @@ def upload_photo(file_name):
     headers = {'Authorization': 'Bearer ' + token}
 
     url = base_url + "/uploadPhoto"
-    print("Uploading photo" + file_name)
+    print("Uploading photo " + file_name)
     try:
         file = open(file_name, "rb")
     except FileNotFoundError:
@@ -91,6 +90,7 @@ def upload_photo(file_name):
     r = requests.post(url, files=photo, headers=headers, data=data)
     print("Upload success!")
     print("Removing file...")
+    print(r.json()["id"])
     return r.json()["id"]
 
 
@@ -126,11 +126,9 @@ except IOError:
     print("Failed reading config. Please create config.json to login")
     sys.exit()
 
-# print(config)
-# sign_in(config["login"], config["password"])
-#
-# # upload_detail("asa")
-# while True:
-#     upload_all_details()
-#     time.sleep(delay)
-print(str(parameters_analyzer.get_params("detail.jpg")))
+print(config)
+sign_in(config["login"], config["password"])
+
+while True:
+    upload_all_details()
+    time.sleep(delay)

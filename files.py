@@ -6,4 +6,4 @@ def get_all_files():
 
 
 def get_all_photos_names():
-    return list(filter(lambda x: x.endswith("png"), get_all_files()))
+    return list(filter(lambda x: x.endswith("jpg"), get_all_files()))
