@@ -81,9 +81,9 @@ def upload_photo(file_name):
         print("File was not found!")
         return
 
-    day = datetime.datetime.day
-    month = datetime.datetime.month
-    year = datetime.datetime.year
+    day = datetime.datetime.today().day
+    month = datetime.datetime.today().month
+    year = datetime.datetime.today().year
 
     photo = {
         "file": file
@@ -100,9 +100,9 @@ def upload_photo(file_name):
 
 def upload_quality_params(deviations):
     result = []
-    day = datetime.datetime.day
-    month = datetime.datetime.month
-    year = datetime.datetime.year
+    day = datetime.datetime.today().day
+    month = datetime.datetime.today().month
+    year = datetime.datetime.today().year
     for deviationId, value in deviations.items():
         qp_id = add_quality_param(deviationId, "IoT " + str(day) + "/" + str(month) + "/" + str(year), value)
         result.append(qp_id)
